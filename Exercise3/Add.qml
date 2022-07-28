@@ -2,29 +2,31 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
+import custom.model 1.0
 
 Item {
     id: addBox
-    width: 640
-    height: 480
-    property string name: " "
-    property string age: " "
-    property int role: -1
-    property string roleColor: " "
+    width: 690
+    height: 690
+    property string aName: "mon"
+    property int aAge: 25
+    property int aRole: -1
+    property string aRoleColor: " "
+    signal exitSelected()
     function getRoleColor(valRole)
     {
         if(valRole === 0)
         {
-            roleColor = "yellow"
+            aRoleColor = "yellow"
         }
         else if(valRole === 1){
-            roleColor = "blue"
+            aRoleColor = "blue"
         }
         else if(valRole === 2){
-            roleColor = "red"
+            aRoleColor = "red"
         }
         else if(valRole === 3){
-            roleColor = "green"
+            aRoleColor = "green"
         }
     }
 
@@ -32,13 +34,16 @@ Item {
      id: recAdd
      y: 1
      x: 1
-     width: 630
-     height: 470
+     width: 690
+     height: 690
      color: "#55557f"
      anchors.left: parent.left
      anchors.leftMargin: 5
+     MyMemModel {
+         id: mymodel
+     }
      Text{
-         id: age
+         id: ageId
          x: 36
          y: 70
          width: 69
@@ -48,7 +53,7 @@ Item {
 
      }
      Text {
-         id: name
+         id: nameId
          x: 36
          y: 170
          width: 69
@@ -56,66 +61,61 @@ Item {
          text: qsTr("Age:")
          font.pointSize: 14
      }
-     ComboBox {
-         id:box
-         x: 36
-         y: 270
-         width: 140
-         height: 50
-         model: ListModel {
-
-              ListElement {text: "Team Leader" }
-              ListElement {text: "Deverloper" }
-              ListElement {text: "BA" }
-              ListElement {text: "Tester" }
-          }
-         onActivated: {
-         //    getRoleColor(currentIndex)
-         }
-     }
      TextInput{
-         id: inputAge
-         x: 137
-         y: 70
-         width: 268
-         height: 34
-         anchors.centerIn: parent.Center
+         id: inputName
+         x: 110
+         y: 67
+         width: 294
+         height: 37
          color: "black"
          cursorVisible: true
          font.pixelSize: 25
          focus: true
-         text: " "
-         onEditingFinished: {
-             age = inputAge.text
+         text: ""
+         onAccepted: {
+             aName = inputName.text.toString()
+         }
+      }
+
+     TextInput{
+         id: inputAge
+         x: 110
+         y: 167
+         width: 268
+         height: 34
+         color: "black"
+         cursorVisible: true
+         font.pixelSize: 25
+         focus: true
+         text: ""
+         onTextEdited: {
+             aAge = inputAge.text
          }
      }
-         TextInput{
-             id: inputName
-             x: 137
-             y: 170
-             width: 294
-             height: 37
-             anchors.left: age.right
-             anchors.leftMargin: 5
-             anchors.bottom: age.bottom
-             color: "black"
-             cursorVisible: true
-             font.pixelSize: 25
-             focus: true
-             text: " "
-             onEditingFinished: {
-                 name = inputName.text
-             }
+     RoleBox{
+         width: 150
+         height: 34
+         anchors.left: inputAge.left
+         anchors.top: inputAge.bottom
+         anchors.topMargin: 100
+         onSelected: {
+             aRole = idx;
+             getRoleColor(aRole)
+         }
+
      }
+
    }
  Row{
      spacing: 5
      anchors.bottom: recAdd.bottom
-     anchors.horizontalCenter: parent.horizontalCenter
+     anchors.bottomMargin: 10
+     anchors.left: recAdd.left
+     anchors.leftMargin:  290
      Rectangle{
          id: rectangle
-         width: 40
-         height: 25
+         width: 50
+         height: 30
          color: "darkseagreen"
          Text{
              anchors.centerIn: parent.Center
@@ -129,18 +129,17 @@ Item {
          }
          MouseArea{
              anchors.fill: parent
-             anchors.topMargin: 76
-             anchors.rightMargin: -135
-             anchors.bottomMargin: -216
              onClicked: {
-                 ///
+                  mymodel.addMember(aName, aAge, aRoleColor)
+               //  console.log(aName, aAge, role)
+                 mymodel.saveListModelToFile("datalist.json")
              }
          }
      }
      Rectangle{
          id: rectangle1
-         width: 40
-         height: 25
+         width: 50
+         height: 30
          color: "darkseagreen"
          Text{
              anchors.centerIn: parent.Center
@@ -148,19 +147,16 @@ Item {
              anchors.left: parent.left
              anchors.top: parent.top
              color: "black"
-             font.pixelSize: 15
+             font.pixelSize: 12
              anchors.topMargin: 5
              anchors.leftMargin: 5
          }
          MouseArea{
-             anchors.fill: parent
-             anchors.leftMargin: 108
-             anchors.topMargin: 256
-             anchors.rightMargin: -119
-             anchors.bottomMargin: -256
+             anchors.fill: parent    
              onClicked: {
-                 ///
+               exitSelected()
              }
+
          }
     }
  }

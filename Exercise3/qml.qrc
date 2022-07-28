@@ -1,8 +1,11 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MemberList.qml</file>
         <file>HelpBox.qml</file>
         <file>Add.qml</file>
+        <file>Infor.qml</file>
+        <file>RoleBox.qml</file>
+        <file>MainView.qml</file>
+        <file>help.txt</file>
     </qresource>
 </RCC>
